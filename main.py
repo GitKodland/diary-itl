@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
+# Impostare la chiave segreta per la sessione
+app.secret_key = 'il_mio_super_segreto_1234'
 # Connettere SQLite
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///diary.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,20 +24,15 @@ class Card(db.Model):
     subtitle = db.Column(db.String(300), nullable=False)
     # Testo
     text = db.Column(db.Text, nullable=False)
+    # La mail del proprietario della scheda
+    user_email = db.Column(db.String(100), nullable=False)
 
     # Visualizzazione dell'oggetto e dell'id
     def __repr__(self):
         return f'<Card {self.id}>'
     
 
-#Consegna #2. Creare la tabella User
-
-
-
-
-
-
-
+#Consegna #1. Creare la tabella User
 
 
 # Esecuzione della pagina dei contenuti
@@ -48,9 +45,7 @@ def login():
             
             #Consegna #4. Implementare l'autorizzazione
             
-
-
-            
+         
         else:
             return render_template('login.html')
 
@@ -62,7 +57,7 @@ def reg():
         login= request.form['email']
         password = request.form['password']
         
-        #Consegna #3. Fare in modo che i dati dell'utente vengano registrati nel database.
+        # Consegna #3. Implementare la registrazione dell'utente.
         
 
         
@@ -75,11 +70,11 @@ def reg():
 # Esecuzione della pagina dei contenuti
 @app.route('/index')
 def index():
-    # Visualizzazione delle voci del database
+    # Consegna #4. Assicurarsi gli utenti vedano solo le proprie schede
     cards = Card.query.order_by(Card.id).all()
     return render_template('index.html', cards=cards)
 
-# Esecuzione della pagina con la voce
+# Esecuzione della pagina con la scheda
 @app.route('/card/<int:id>')
 def card(id):
     card = Card.query.get(id)
@@ -91,7 +86,7 @@ def card(id):
 def create():
     return render_template('create_card.html')
 
-# Il modulo di iscrizione
+# Il modulo di creazione della scheda
 @app.route('/form_create', methods=['GET','POST'])
 def form_create():
     if request.method == 'POST':
@@ -99,7 +94,7 @@ def form_create():
         subtitle =  request.form['subtitle']
         text =  request.form['text']
 
-        # Creare un oggetto che sarà inviato al DB
+        # Consegna #4. Fare in modo che la creazione avvenga per contro dell'utente corretto
         card = Card(title=title, subtitle=subtitle, text=text)
 
         db.session.add(card)
@@ -108,7 +103,8 @@ def form_create():
     else:
         return render_template('create_card.html')
 
-
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 
