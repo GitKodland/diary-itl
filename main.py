@@ -54,7 +54,7 @@ def login():
 @app.route('/reg', methods=['GET','POST'])
 def reg():
     if request.method == 'POST':
-        login= request.form['email']
+        email = request.form['email']
         password = request.form['password']
         
         # Consegna #3. Implementare la registrazione dell'utente.
